@@ -168,7 +168,15 @@
     transition: transform 0.15s, box-shadow 0.15s;
   }
   .product:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(30,107,79,0.1); }
-  .product .p-emoji { font-size: 38px; margin-bottom: 10px; }
+  .product .p-photo {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+    margin-bottom: 14px;
+    background: var(--cream);
+  }
   .product .p-tag {
     display: inline-block;
     font-size: 11px;
@@ -520,42 +528,42 @@
     </div>
     <div class="products">
       <div class="product reveal">
-        <div class="p-emoji">🍋</div>
+        <img class="p-photo" src="img/highball.jpg" alt="레몬 하이볼" loading="lazy">
         <span class="p-tag">RX No.01</span>
         <h4>하이볼 처방 세트</h4>
         <p class="p-items">하이볼 베이스 시럽 · 가라아게 밀키트 · 건조 레몬 슬라이스</p>
         <p class="p-price">₩24,900</p>
       </div>
       <div class="product reveal">
-        <div class="p-emoji">🥃</div>
+        <img class="p-photo" src="img/whisky.jpg" alt="위스키 온더락" loading="lazy">
         <span class="p-tag">RX No.02</span>
         <h4>위스키 처방 세트</h4>
         <p class="p-items">싱글몰트 미니어처 · 다크초콜릿 · 숙성 치즈 큐브</p>
         <p class="p-price">₩39,900</p>
       </div>
       <div class="product reveal">
-        <div class="p-emoji">🍻</div>
+        <img class="p-photo" src="img/somaek.jpg" alt="소맥" loading="lazy">
         <span class="p-tag">RX No.03</span>
         <h4>소맥 처방 세트</h4>
         <p class="p-items">황금비율 계량잔 · 치킨 시즈닝 3종 · 해장 스프</p>
         <p class="p-price">₩19,900</p>
       </div>
       <div class="product reveal">
-        <div class="p-emoji">🍷</div>
+        <img class="p-photo" src="img/wine.jpg" alt="레드 와인" loading="lazy">
         <span class="p-tag">RX No.04</span>
         <h4>와인 처방 세트</h4>
         <p class="p-items">데일리 레드와인 · 브리치즈 · 수제 크래커</p>
         <p class="p-price">₩34,900</p>
       </div>
       <div class="product reveal">
-        <div class="p-emoji">🛋️</div>
+        <img class="p-photo" src="img/beer.jpg" alt="라거 맥주" loading="lazy">
         <span class="p-tag">RX No.05</span>
         <h4>맥주 처방 세트</h4>
         <p class="p-items">크래프트 라거 2종 · 나쵸 &amp; 살사 · 트러플 감자칩</p>
         <p class="p-price">₩16,900</p>
       </div>
       <div class="product reveal">
-        <div class="p-emoji">🌧️</div>
+        <img class="p-photo" src="img/makgeolli.jpg" alt="막걸리" loading="lazy">
         <span class="p-tag">RX No.06</span>
         <h4>막걸리 처방 세트</h4>
         <p class="p-items">프리미엄 막걸리 · 김치전 밀키트 · 감성 메모 패드</p>
