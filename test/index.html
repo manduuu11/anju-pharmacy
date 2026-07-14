@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>안주약국 — 오늘의 혼술, 처방해드립니다</title>
+<meta name="description" content="8개의 문진으로 알아보는 나의 혼술 유형. 오늘 밤 술과 안주를 처방해드립니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1e6b4f;
+    --green-dark: #14503a;
+    --mint: #e8f3ee;
+    --cream: #faf7f0;
+    --ink: #26302b;
+    --red: #c94f3d;
+    --line: #d8e5de;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Pretendard', -apple-system, 'Malgun Gothic', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .serif { font-family: 'Gowun Batang', serif; }
+
+  .wrap {
+    width: 100%;
+    max-width: 480px;
+    padding: 24px 20px 60px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 상단 브랜드 바 */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 0 22px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .cross {
+    width: 22px; height: 22px;
+    background: var(--green);
+    border-radius: 4px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .cross::before, .cross::after {
+    content: '';
+    position: absolute;
+    background: var(--cream);
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .cross::before { width: 12px; height: 3px; }
+  .cross::after { width: 3px; height: 12px; }
+  .topbar .name {
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    color: var(--green-dark);
+    font-size: 15px;
+  }
+
+  /* 공통 카드 */
+  .card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 32px 26px;
+    box-shadow: 0 6px 24px rgba(30, 107, 79, 0.07);
+  }
+
+  /* ── 인트로 ── */
+  #intro { text-align: center; }
+  .badge {
+    display: inline-block;
+    background: var(--mint);
+    color: var(--green-dark);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+  #intro h1 {
+    font-size: 34px;
+    line-height: 1.35;
+    color: var(--green-dark);
+    margin-bottom: 14px;
+  }
+  #intro .sub {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #5d6a63;
+    margin-bottom: 8px;
+  }
+  .hours {
+    margin: 22px auto 26px;
+    display: inline-block;
+    border-top: 1px dashed var(--line);
+    border-bottom: 1px dashed var(--line);
+    padding: 10px 18px;
+    font-size: 13px;
+    color: #7b877f;
+    letter-spacing: 0.08em;
+  }
+  .btn {
+    display: inline-block;
+    width: 100%;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 700;
+    font-family: inherit;
+    padding: 18px 0;
+    cursor: pointer;
+    transition: transform 0.12s, background 0.2s;
+  }
+  .btn:hover { background: var(--green-dark); transform: translateY(-1px); }
+  .btn:active { transform: translateY(1px); }
+  .btn.ghost {
+    background: transparent;
+    color: var(--green-dark);
+    border: 1.5px solid var(--green);
+  }
+  .btn.ghost:hover { background: var(--mint); }
+
+  /* ── 문진 ── */
+  #quiz { display: none; }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12.5px;
+    color: #7b877f;
+    margin-bottom: 8px;
+    letter-spacing: 0.06em;
+  }
+  .progress-track {
+    height: 6px;
+    background: var(--line);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--green);
+    border-radius: 999px;
+    transition: width 0.35s ease;
+  }
+  .q-text {
+    font-size: 21px;
+    line-height: 1.5;
+    font-weight: 700;
+    margin-bottom: 24px;
+    min-height: 64px;
+  }
+  .q-text .serif { color: var(--green-dark); }
+  .opts { display: flex; flex-direction: column; gap: 12px; }
+  .opt {
+    text-align: left;
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    padding: 17px 18px;
+    font-size: 15.5px;
+    line-height: 1.5;
+    font-family: inherit;
+    color: var(--ink);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  }
+  .opt:hover { border-color: var(--green); background: var(--mint); }
+  .opt:active { transform: scale(0.985); }
+
+  /* ── 로딩 ── */
+  #loading { display: none; text-align: center; padding: 80px 0; }
+  #loading .pill {
+    font-size: 46px;
+    animation: shake 0.9s ease-in-out infinite;
+    display: inline-block;
+  }
+  @keyframes shake {
+    0%, 100% { transform: rotate(-8deg); }
+    50% { transform: rotate(8deg); }
+  }
+  #loading p { margin-top: 18px; color: #5d6a63; font-size: 15px; line-height: 1.7; }
+
+  /* ── 결과: 처방전 ── */
+  #result { display: none; }
+  .rx {
+    background: #fff;
+    border: 1.5px solid var(--green);
+    border-radius: 6px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(30, 107, 79, 0.12);
+  }
+  .rx-head {
+    background: var(--green);
+    color: #fff;
+    text-align: center;
+    padding: 14px;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    font-weight: 700;
+  }
+  .rx-body { padding: 28px 24px 24px; }
+  .rx-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #8a948d;
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    letter-spacing: 0.04em;
+  }
+  .rx-emoji { font-size: 54px; text-align: center; margin-bottom: 10px; }
+  .rx-type {
+    text-align: center;
+    font-size: 26px;
+    color: var(--green-dark);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .rx-tagline {
+    text-align: center;
+    font-size: 14px;
+    color: #7b877f;
+    margin-bottom: 26px;
+  }
+  .rx-section { margin-bottom: 20px; }
+  .rx-label {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--green);
+    border: 1px solid var(--green);
+    border-radius: 4px;
+    padding: 3px 8px;
+    margin-bottom: 8px;
+  }
+  .rx-section p { font-size: 15px; line-height: 1.75; }
+  .rx-pairing {
+    background: var(--mint);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+  }
+  .rx-pairing .pair-main {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--green-dark);
+    margin-bottom: 4px;
+  }
+  .rx-pairing .pair-sub { font-size: 13.5px; color: #5d6a63; }
+  .rx-stamp {
+    text-align: right;
+    margin-top: 26px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+  }
+  .rx-stamp .sign {
+    font-size: 13px;
+    color: #8a948d;
+    margin-bottom: 6px;
+  }
+  .stamp-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px; height: 64px;
+    border: 2.5px solid var(--red);
+    border-radius: 50%;
+    color: var(--red);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    transform: rotate(-12deg);
+    line-height: 1.3;
+    text-align: center;
+  }
+  .result-btns { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 99;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  footer {
+    text-align: center;
+    font-size: 12px;
+    color: #a3ada6;
+    padding: 20px 0 32px;
+    line-height: 1.8;
+  }
+
+  .fade-in { animation: fadeUp 0.4s ease both; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar" onclick="goHome()">
+    <div class="cross"></div>
+    <span class="name">안 주 약 국</span>
+  </div>
+
+  <!-- 인트로 -->
+  <section id="intro" class="card fade-in">
+    <span class="badge">혼술 처방 클리닉</span>
+    <h1 class="serif">오늘의 혼술,<br>처방해드립니다</h1>
+    <p class="sub">퇴근은 했는데 뭘 마셔야 할지 모르겠다면,<br>
+    8개의 문진으로 당신의 혼술 유형을 진단하고<br>
+    딱 맞는 <b>술 × 안주 페어링</b>을 처방해드려요.</p>
+    <div class="hours">진료시간 · 매일 밤 PM 7:00 — AM 2:00</div>
+    <button class="btn" onclick="startQuiz()">진료 시작하기</button>
+  </section>
+
+  <!-- 문진 -->
+  <section id="quiz" class="card">
+    <div class="progress-label">
+      <span>문진표</span>
+      <span id="progressText">1 / 8</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div id="qText" class="q-text"></div>
+    <div id="opts" class="opts"></div>
+  </section>
+
+  <!-- 로딩 -->
+  <section id="loading" class="card">
+    <span class="pill">💊</span>
+    <p>문진표를 검토 중입니다...<br>당신의 혼술 유형을 조제하고 있어요.</p>
+  </section>
+
+  <!-- 결과 -->
+  <section id="result">
+    <div class="rx fade-in">
+      <div class="rx-head">처 방 전 · PRESCRIPTION</div>
+      <div class="rx-body">
+        <div class="rx-meta">
+          <span>발급기관: 안주약국</span>
+          <span id="rxDate"></span>
+        </div>
+        <div class="rx-emoji" id="rEmoji"></div>
+        <div class="rx-type serif" id="rType"></div>
+        <div class="rx-tagline" id="rTagline"></div>
+
+        <div class="rx-section">
+          <span class="rx-label">진단 소견</span>
+          <p id="rSymptom"></p>
+        </div>
+
+        <div class="rx-section">
+          <span class="rx-label">처방 내역</span>
+          <div class="rx-pairing">
+            <div class="pair-main" id="rPairing"></div>
+            <div class="pair-sub" id="rPairingSub"></div>
+          </div>
+        </div>
+
+        <div class="rx-section">
+          <span class="rx-label">복용법</span>
+          <p id="rUsage"></p>
+        </div>
+
+        <div class="rx-section">
+          <span class="rx-label">궁합 안내</span>
+          <p id="rMatch"></p>
+        </div>
+
+        <div class="rx-stamp">
+          <div class="sign">담당 약사 · 안주약국</div>
+          <div class="stamp-circle">처방<br>완료</div>
+        </div>
+      </div>
+    </div>
+    <div class="result-btns">
+      <button class="btn" onclick="share()">처방전 공유하기</button>
+      <button class="btn ghost" onclick="restart()">다시 진료받기</button>
+    </div>
+  </section>
+
+  <footer>
+    © 안주약국 ANJU PHARMACY<br>
+    가상 브랜드 캠페인 · 포트폴리오 프로젝트
+  </footer>
+</div>
+
+<div class="toast" id="toast">링크가 복사되었습니다 🍸</div>
+
+<script>
+const QUESTIONS = [
+  {
+    q: '금요일 저녁, 집에 도착한 당신의<br><span class="serif">첫 행동</span>은?',
+    opts: [
+      { t: '샤워부터. 개운하게 씻고 마셔야지', k: 'highball' },
+      { t: '조명부터 낮춘다. 무드가 절반이다', k: 'wine' },
+      { t: '배달앱부터 켠다. 오늘은 먹어야 해', k: 'somaek' },
+      { t: '소파에 눕는다. 리모컨 어딨지', k: 'beer' },
+    ],
+  },
+  {
+    q: '혼술 <span class="serif">BGM</span>으로 고른다면?',
+    opts: [
+      { t: '재즈나 로파이. 잔잔한 게 좋아', k: 'whisky' },
+      { t: '시티팝이나 신나는 플리. 텐션 업', k: 'highball' },
+      { t: '발라드… 오늘따라 감성이 차오른다', k: 'makgeolli' },
+      { t: '음악보다 예능 소리가 최고의 BGM', k: 'beer' },
+    ],
+  },
+  {
+    q: '오늘 하루를 <span class="serif">한 단어</span>로 표현하면?',
+    opts: [
+      { t: '전쟁. 살아남은 게 기적이다', k: 'somaek' },
+      { t: '무난. 딱히 나쁘지도 좋지도', k: 'beer' },
+      { t: '싱숭생숭. 이유는 모르겠음', k: 'makgeolli' },
+      { t: '뿌듯. 오늘의 나, 좀 괜찮았다', k: 'wine' },
+    ],
+  },
+  {
+    q: '<span class="serif">안주</span>를 고르는 기준은?',
+    opts: [
+      { t: '무조건 바삭해야 해. 식감이 생명', k: 'highball' },
+      { t: '술맛을 해치지 않는 깔끔함', k: 'whisky' },
+      { t: '양! 든든해야 술이 들어가지', k: 'somaek' },
+      { t: '오늘 감성에 어울리는 비주얼', k: 'wine' },
+    ],
+  },
+  {
+    q: '술 마시는 <span class="serif">속도</span>는?',
+    opts: [
+      { t: '첫 잔은 원샷. 그 뒤로도 원샷', k: 'somaek' },
+      { t: '홀짝홀짝. 한 잔으로 세 시간', k: 'whisky' },
+      { t: '시원할 때 빠르게. 미지근해지면 진다', k: 'beer' },
+      { t: '한 사발씩 천천히, 이야기하듯', k: 'makgeolli' },
+    ],
+  },
+  {
+    q: '혼술하면서 주로 <span class="serif">하는 것</span>은?',
+    opts: [
+      { t: '밀린 드라마 정주행. 다음 화 자동재생', k: 'beer' },
+      { t: '창밖 보면서 멍때리기', k: 'whisky' },
+      { t: '인스타 스토리 업로드. 이 무드 아깝잖아', k: 'wine' },
+      { t: '친구한테 전화. "야 뭐해"', k: 'somaek' },
+    ],
+  },
+  {
+    q: '이상적인 혼술 <span class="serif">날씨</span>는?',
+    opts: [
+      { t: '비 오는 날. 빗소리가 안주다', k: 'makgeolli' },
+      { t: '무더운 여름밤. 얼음 소리와 함께', k: 'highball' },
+      { t: '쌀쌀한 가을밤. 공기가 술을 부른다', k: 'whisky' },
+      { t: '날씨? 금요일이면 됐다', k: 'somaek' },
+    ],
+  },
+  {
+    q: '혼술의 <span class="serif">마무리</span>는?',
+    opts: [
+      { t: '딱 기분 좋을 만큼만. 깔끔하게 정리', k: 'wine' },
+      { t: '라면 하나 끓인다. 이게 국룰', k: 'somaek' },
+      { t: '남은 잔 들고 그대로 침대로', k: 'beer' },
+      { t: '일기나 메모 한 줄. 취중진담', k: 'makgeolli' },
+    ],
+  },
+];
+
+const RESULTS = {
+  highball: {
+    emoji: '🍋',
+    type: '청량 하이볼형',
+    tagline: '첫 모금의 짜릿함으로 하루를 리셋하는 사람',
+    symptom: '퇴근과 동시에 목이 마르기 시작함. 무겁고 진한 술보다는 탄산의 청량감으로 피로를 씻어내는 타입. 술자리 텐션 메이커 기질이 있으나, 오늘은 혼자서도 충분히 신남.',
+    pairing: '레몬 하이볼 × 치킨 가라아게',
+    pairingSub: '청량함과 바삭함의 정석 페어링',
+    usage: '얼음은 잔 끝까지 가득, 레몬은 아끼지 말 것. 바삭한 안주와 교차 복용 시 효과가 2배가 됩니다. 미지근해지기 전에 복용하세요.',
+    match: '소맥 K-직장인형과 만나면 2차, 3차까지 달릴 수 있으니 다음날 일정을 확인하세요.',
+  },
+  whisky: {
+    emoji: '🥃',
+    type: '새벽 감성 위스키형',
+    tagline: '술보다 분위기에 취하는 사람',
+    symptom: '시끄러운 자리보다 혼자만의 시간이 절실함. 술을 빨리 마시는 법이 없고, 한 잔을 오래 붙잡고 생각에 잠기는 타입. 늦은 밤 창밖을 보다가 문득 잔을 채움.',
+    pairing: '위스키 온더락 × 다크초콜릿 & 치즈',
+    pairingSub: '천천히 음미하는 새벽의 페어링',
+    usage: '조명은 어둡게, 음악은 낮게. 30분 이상 천천히 음미하며 복용할 것. 급하게 마시면 효능이 사라집니다.',
+    match: '와인 무드형과 조용한 대화가 잘 통합니다. 말없이 마셔도 어색하지 않은 유일한 조합.',
+  },
+  somaek: {
+    emoji: '🍻',
+    type: '소맥 K-직장인형',
+    tagline: '"한 잔만"이 절대 안 되는 사람',
+    symptom: '오늘 하루 고생한 만큼 화끈하게 풀어야 직성이 풀리는 타입. 혼술로 시작했지만 어느새 친구에게 전화를 걸고 있음. 마무리 라면 확률 90% 이상.',
+    pairing: '황금비율 소맥 × 후라이드 치킨',
+    pairingSub: '설명이 필요 없는 국민 페어링',
+    usage: '첫 잔은 시원하게 원샷. 단, 반드시 다음날 출근 여부를 확인한 후 복용하십시오. 과다 복용 시 새벽 라면으로 이어질 수 있습니다.',
+    match: '청량 하이볼형과 만나면 밤샘 확정. 서로의 텐션을 증폭시키는 위험한 궁합.',
+  },
+  wine: {
+    emoji: '🍷',
+    type: '와인 무드형',
+    tagline: '술이 아니라 분위기를 마시는 사람',
+    symptom: '잔 모양, 조명, 테이블 세팅까지 신경 쓰는 타입. 혼술도 하나의 리추얼로 만드는 사람. 오늘의 나를 잘 돌본 날일수록 좋은 와인을 꺼냄.',
+    pairing: '레드 와인 × 브리치즈 & 크래커',
+    pairingSub: '무드를 완성하는 클래식 페어링',
+    usage: '인스타 스토리 업로드는 두 잔째에 할 것. 세 잔째부터는 감성이 과다 복용될 수 있으니 주의하십시오.',
+    match: '새벽 감성 위스키형과 취향 대화가 끊이지 않습니다. 서로의 플레이리스트를 궁금해하는 사이.',
+  },
+  beer: {
+    emoji: '🛋️',
+    type: '맥주 넷플릭스형',
+    tagline: '편안함이 최고의 안주인 사람',
+    symptom: '술은 거들 뿐, 본체는 소파와 정주행. 복잡한 페어링보다 손 닿는 곳의 과자면 충분한 실용주의자. 가장 스트레스 없는 혼술을 구사하는 타입.',
+    pairing: '시원한 라거 × 나쵸 & 감자칩',
+    pairingSub: '정주행을 방해하지 않는 원핸드 페어링',
+    usage: '미지근해지기 전에 복용할 것. \'다음 화 자동재생\'과 함께 복용하면 효과가 지속됩니다. 잠들기 전 남은 캔 처리에 유의하세요.',
+    match: '막걸리 감성형의 이야기를 잘 들어주는 든든한 짝꿍입니다.',
+  },
+  makgeolli: {
+    emoji: '🌧️',
+    type: '막걸리 감성형',
+    tagline: '비만 오면 술 생각나는 사람',
+    symptom: '감성이 차오르면 안주보다 이야기가 고픈 타입. 빗소리를 최고의 안주로 여기며, 혼술 중 오래된 플레이리스트를 꺼내 듣는 습관이 있음. 취중 메모 보유자.',
+    pairing: '막걸리 한 사발 × 김치전',
+    pairingSub: '비 오는 날의 공식 페어링',
+    usage: '빗소리와 함께 복용 시 효과가 극대화됩니다. 취중에 쓴 메모는 다음날 삭제하지 마세요. 그건 소중한 기록입니다.',
+    match: '맥주 넷플릭스형 앞에서 속마음이 열립니다. 이야기하는 사람과 들어주는 사람의 완벽한 균형.',
+  },
+};
+
+let current = 0;
+const scores = { highball: 0, whisky: 0, somaek: 0, wine: 0, beer: 0, makgeolli: 0 };
+
+const $ = (id) => document.getElementById(id);
+
+function goHome() {
+  ['quiz', 'loading', 'result'].forEach((id) => ($(id).style.display = 'none'));
+  $('intro').style.display = 'block';
+}
+
+function startQuiz() {
+  current = 0;
+  Object.keys(scores).forEach((k) => (scores[k] = 0));
+  $('intro').style.display = 'none';
+  $('result').style.display = 'none';
+  $('quiz').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[current];
+  $('progressText').textContent = `${current + 1} / ${QUESTIONS.length}`;
+  $('progressFill').style.width = `${(current / QUESTIONS.length) * 100}%`;
+  $('qText').innerHTML = `Q${current + 1}. ${q.q}`;
+  const opts = $('opts');
+  opts.innerHTML = '';
+  // 선택지 순서 셔플
+  const shuffled = [...q.opts].sort(() => Math.random() - 0.5);
+  shuffled.forEach((o) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt fade-in';
+    btn.textContent = o.t;
+    btn.onclick = () => answer(o.k);
+    opts.appendChild(btn);
+  });
+}
+
+function answer(key) {
+  scores[key]++;
+  current++;
+  if (current < QUESTIONS.length) {
+    renderQuestion();
+  } else {
+    $('progressFill').style.width = '100%';
+    showLoading();
+  }
+}
+
+function showLoading() {
+  $('quiz').style.display = 'none';
+  $('loading').style.display = 'block';
+  setTimeout(showResult, 1600);
+}
+
+function pickResult() {
+  const max = Math.max(...Object.values(scores));
+  const winners = Object.keys(scores).filter((k) => scores[k] === max);
+  return winners[Math.floor(Math.random() * winners.length)];
+}
+
+function showResult(forceKey) {
+  const key = forceKey || pickResult();
+  const r = RESULTS[key];
+  $('loading').style.display = 'none';
+  $('rEmoji').textContent = r.emoji;
+  $('rType').textContent = r.type;
+  $('rTagline').textContent = r.tagline;
+  $('rSymptom').textContent = r.symptom;
+  $('rPairing').textContent = r.pairing;
+  $('rPairingSub').textContent = r.pairingSub;
+  $('rUsage').textContent = r.usage;
+  $('rMatch').textContent = r.match;
+  const now = new Date();
+  $('rxDate').textContent = `발급일: ${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')}`;
+  $('result').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restart() {
+  startQuiz();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function share() {
+  const url = location.href.split('#')[0];
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: '안주약국 — 혼술 처방 테스트',
+        text: '오늘의 혼술, 처방받아보세요 🍸',
+        url,
+      });
+      return;
+    }
+    await navigator.clipboard.writeText(url);
+    showToast();
+  } catch (e) {
+    /* 사용자가 공유를 취소한 경우 등 */
+  }
+}
+
+function showToast() {
+  const t = $('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>
